@@ -1,3 +1,5 @@
+<img src="assets/logo.png" width="96" alt="KeyBurst logo">
+
 # KeyBurst
 
 A small Windows app that spams keys for you, each at its own speed.

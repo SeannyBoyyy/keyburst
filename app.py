@@ -2,6 +2,7 @@
 import json
 import os
 import queue
+import sys
 import threading
 import time
 import tkinter as tk
@@ -11,6 +12,12 @@ import keyboard
 
 from engine import MIN_INTERVAL_MS, Clicker
 
+
+
+def resource_path(relative):
+    """Find a bundled file, both when run from source and as a packed .exe."""
+    base = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
+    return base / relative
 
 
 def config_path():
@@ -129,8 +136,6 @@ class Row:
         self.entry.bind("<KeyRelease>", lambda e: app.sync())
         self.entry.bind("<FocusOut>", lambda e: self.normalize())
         flat_button(f, "+", lambda: self.step(1), width=2, padx=4).grid(row=0, column=4)
-        tk.Label(f, text="per second", bg=CARD, fg=MUTED, font=FONT_S
-                 ).grid(row=0, column=5, padx=(8, 0))
 
         rm = flat_button(f, "✕", lambda: app.remove_row(self), bg=CARD, over=RED,
                          fg=MUTED, width=2, padx=4)
@@ -172,6 +177,10 @@ class App:
     def __init__(self, root):
         self.root = root
         root.title("KeyBurst")
+        try:
+            root.iconbitmap(str(resource_path("assets/icon.ico")))
+        except Exception:
+            pass  # no icon is fine
         root.configure(bg=BG)
         root.resizable(False, False)
 
