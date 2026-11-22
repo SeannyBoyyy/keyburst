@@ -1,5 +1,6 @@
 """KeyBurst: hotkey spam clicker with per-key speed."""
 import json
+import os
 import queue
 import threading
 import time
@@ -10,7 +11,19 @@ import keyboard
 
 from engine import MIN_INTERVAL_MS, Clicker
 
-CONFIG_PATH = Path(__file__).with_name("config.json")
+
+
+def config_path():
+    """Settings live in %APPDATA%\\KeyBurst so they survive when run as an .exe."""
+    folder = Path(os.environ.get("APPDATA") or Path.home()) / "KeyBurst"
+    try:
+        folder.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
+    return folder / "config.json"
+
+
+CONFIG_PATH = config_path()
 MAX_ROWS = 12
 MAX_CPS = 1000 // MIN_INTERVAL_MS  # 50 clicks per second
 MIN_CPS = 0.5

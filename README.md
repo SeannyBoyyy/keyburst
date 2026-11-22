@@ -10,7 +10,7 @@ Pick the keys, set clicks per second for each one, and start or stop everything 
 - Separate speed for every key (0.5 to 50 clicks per second)
 - One key to start and stop (default `F6`), and you can change it
 - Tick or untick a key to turn it on or off without deleting it
-- Settings are saved automatically in `config.json`
+- Settings are saved automatically in `%APPDATA%\KeyBurst\config.json`
 
 ## Requirements
 
