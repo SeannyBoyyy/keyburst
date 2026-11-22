@@ -4,6 +4,14 @@ A small Windows app that spams keys for you, each at its own speed.
 
 Pick the keys, set clicks per second for each one, and start or stop everything with a single key. It works in games, notes, and any other app that accepts key presses.
 
+![KeyBurst window](docs/screenshot.png)
+
+## Download
+
+Get `KeyBurst.exe` from the [latest release](https://github.com/SeannyBoyyy/keyburst/releases/latest). No install and no Python needed.
+
+Windows may show a warning for apps it does not know. The release notes have a SHA256 checksum so you can check your download.
+
 ## Features
 
 - Spam any keys you choose, up to 12 at once
@@ -17,7 +25,7 @@ Pick the keys, set clicks per second for each one, and start or stop everything 
 - Windows
 - Python 3.9 or newer (tkinter comes with the standard Windows installer)
 
-## Run
+## Run from source
 
 ```powershell
 git clone https://github.com/SeannyBoyyy/keyburst.git
