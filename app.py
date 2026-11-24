@@ -99,6 +99,16 @@ def flat_button(parent, text="", command=None, bg=FIELD, over=FIELD_HOVER,
     return b
 
 
+COL_MIN = {0: 44, 1: 140, 2: 120}  # On, Key, Speed column widths (px)
+
+
+def setup_columns(frame):
+    """Same column widths for the header and every row, so they line up."""
+    for col, size in COL_MIN.items():
+        frame.grid_columnconfigure(col, minsize=size)
+    frame.grid_columnconfigure(3, weight=1)  # pushes the remove button to the right edge
+
+
 def make_card(parent, title, hint):
     card = tk.Frame(parent, bg=CARD, padx=14, pady=12)
     card.pack(fill="x", pady=(0, 12))
@@ -119,27 +129,30 @@ class Row:
         self.label = tk.StringVar(value=self.key.get().upper())
         self.cps = tk.StringVar(value=f"{data.get('cps', 10):g}")
         f = self.frame
+        setup_columns(f)
 
         tk.Checkbutton(f, variable=self.enabled, command=app.sync, bg=CARD,
                        activebackground=CARD, selectcolor=FIELD, fg=TEXT,
                        bd=0, highlightthickness=0, cursor="hand2"
-                       ).grid(row=0, column=0, padx=(0, 10))
+                       ).grid(row=0, column=0)
         self.key_btn = flat_button(f, command=lambda: app.record_key(self), width=12)
         self.key_btn.config(textvariable=self.label)
-        self.key_btn.grid(row=0, column=1, padx=(0, 14))
+        self.key_btn.grid(row=0, column=1)
 
-        flat_button(f, "−", lambda: self.step(-1), width=2, padx=4).grid(row=0, column=2)
-        self.entry = tk.Entry(f, textvariable=self.cps, width=5, justify="center",
+        speed = tk.Frame(f, bg=CARD)
+        speed.grid(row=0, column=2)
+        flat_button(speed, "−", lambda: self.step(-1), width=2, padx=4).pack(side="left")
+        self.entry = tk.Entry(speed, textvariable=self.cps, width=5, justify="center",
                               bg=FIELD, fg=TEXT, insertbackground=TEXT,
                               relief="flat", font=FONT_B)
-        self.entry.grid(row=0, column=3, padx=4, ipady=4)
+        self.entry.pack(side="left", padx=4, ipady=4)
         self.entry.bind("<KeyRelease>", lambda e: app.sync())
         self.entry.bind("<FocusOut>", lambda e: self.normalize())
-        flat_button(f, "+", lambda: self.step(1), width=2, padx=4).grid(row=0, column=4)
+        flat_button(speed, "+", lambda: self.step(1), width=2, padx=4).pack(side="left")
 
         rm = flat_button(f, "✕", lambda: app.remove_row(self), bg=CARD, over=RED,
                          fg=MUTED, width=2, padx=4)
-        rm.grid(row=0, column=6, padx=(10, 0))
+        rm.grid(row=0, column=3, sticky="e")
 
     def show(self):
         self.label.set(self.key.get().upper())
@@ -217,13 +230,12 @@ class App:
         body = make_card(outer, "2   Keys to spam",
                          "Tick the keys you want. Click a key to change it.")
         head = tk.Frame(body, bg=CARD)
-        head.pack(anchor="w")
-        tk.Label(head, text="On", width=4, bg=CARD, fg=MUTED, font=FONT_S).grid(row=0, column=0)
-        tk.Label(head, text="Key", width=14, bg=CARD, fg=MUTED, font=FONT_S).grid(row=0, column=1)
-        tk.Label(head, text="Clicks per second", bg=CARD, fg=MUTED, font=FONT_S
-                 ).grid(row=0, column=2, padx=(10, 0))
+        head.pack(fill="x")
+        setup_columns(head)
+        for col, text in enumerate(("On", "Key", "Clicks per second")):
+            tk.Label(head, text=text, bg=CARD, fg=MUTED, font=FONT_S).grid(row=0, column=col)
         self.rows_frame = tk.Frame(body, bg=CARD)
-        self.rows_frame.pack(anchor="w", pady=(4, 0))
+        self.rows_frame.pack(fill="x", pady=(4, 0))
         for entry in self.cfg["entries"][:MAX_ROWS]:
             self._add_row(entry)
         self.add_btn = flat_button(body, "+  Add key", self.add_row, bg=CARD,
@@ -247,7 +259,7 @@ class App:
     # ---- rows
     def _add_row(self, data):
         row = Row(self, self.rows_frame, data)
-        row.frame.pack(anchor="w", pady=3)
+        row.frame.pack(fill="x", pady=3)
         self.rows.append(row)
 
     def add_row(self):
